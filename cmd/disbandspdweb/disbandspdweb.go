@@ -70,6 +70,14 @@ func csvFilename() string {
 	return fname
 }
 
+func remoteAddr(r *http.Request) string {
+	forwarded := r.Header.Get("X-FORWARDED-FOR")
+	if forwarded != "" {
+		return forwarded
+	}
+	return r.RemoteAddr
+}
+
 func saveSignup(r *http.Request) string {
 	err := r.ParseForm()
 	if err != nil {
@@ -95,7 +103,7 @@ func saveSignup(r *http.Request) string {
 		defer f.Close()
 
 		w := csv.NewWriter(f)
-		w.Write([]string{time.Now().Format(time.RFC3339), name, email})
+		w.Write([]string{time.Now().Format(time.RFC3339), remoteAddr(r), name, email})
 		w.Flush()
 		err = w.Error()
 		if err != nil {

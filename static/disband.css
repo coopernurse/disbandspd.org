@@ -17,6 +17,7 @@ button, input, select, textarea {
 
 div.main {
     background-color: #eee;
+    border-radius: .5rem;
     padding: 2rem;
     font-size: 2rem;
 }
