@@ -1,0 +1,50 @@
+{{template "header" .}}
+
+<h2>Disband SPD Petition</h2>
+
+{{if .error}}
+<div class="error">
+  {{.error}}
+</div>
+{{end}}
+
+<form method="post" class="sign">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" value="{{.name}}"/>
+  <label for="email">Email:</label>
+  <input type="text" id="email" name="email"/>
+  <div class="submit">
+    <input type="submit" value="I Support This Petition" />
+  </div>
+</form>
+
+<p>
+Public safety is intertwined with a myriad of other issues including racial injustice,
+poverty, mental illness, and substance abuse. These problems have reached crisis
+proportions. We have the opportunity to redirect the ENTIRE $357M SPD budget towards a
+solution that builds and serves the community holistically.
+</p>
+
+<p>
+We believe that the SPD is beyond reform and it's time for
+the residents of Seattle to re-imagine how public safety is addressed in our community.
+The root of the racial injustice and extreme violence
+in this system stems from its detachment from the community it allegedly serves.
+We must ensure its replacement addresses this.
+</p>
+
+<p>
+  <b>We propose that the City of Seattle:</b>
+</p>
+
+<ol>
+  <li>Establish a citizens committee in each city council district, facilitated by the residents of that district.</li>
+  <li>Residents of each district will submit proposals and hold a series of town halls to discuss those proposals.</li>
+  <li>Each district will vote to select the proposal to represent their district.</li>
+  <li>A city wide election will be held using approval voting to select the most popular district proposal.</li>
+  <li>The selected proposal will be enacted.
+    The entire SPD budget will be redirected to fund this proposal.
+    SPD in its present form will be disbanded.</li>
+</ol>
+
+{{template "footer" .}}
