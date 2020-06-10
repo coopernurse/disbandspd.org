@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -19,6 +21,21 @@ func main() {
 		log.Fatal(err)
 	}
 	http.HandleFunc("/alternatives", HtmlPage(templates, "alternatives.html", "Disband SPD - Alternatives to Policing"))
+	http.HandleFunc("/petition-json", func(w http.ResponseWriter, r *http.Request) {
+		resp := make(map[string]interface{})
+		errmsg := saveSignup(r)
+		if errmsg == "" {
+			resp["success"] = true
+		} else {
+			resp["error"] = errmsg
+		}
+		enc := json.NewEncoder(w)
+		w.Header().Set("content-type", "application/json; charset=utf-8")
+		err := enc.Encode(resp)
+		if err != nil {
+			log.Println("ERROR writing json", err)
+		}
+	})
 	http.HandleFunc("/petition", func(w http.ResponseWriter, r *http.Request) {
 		args := make(map[string]string)
 		page := "petition.html"
@@ -38,7 +55,7 @@ func main() {
 		templates.ExecuteTemplate(w, page, args)
 	})
 	http.Handle("/static/", http.FileServer(http.Dir("./")))
-	http.HandleFunc("/", HtmlPage(templates, "index.html", "Disband SPD - Reimagine Public Safety"))
+	http.HandleFunc("/", serveFile("static/boot/index.html", "text/html; charset=utf-8"))
 
 	log.Println("starting server. writing files to:", csvFilename())
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -51,6 +68,23 @@ func HtmlPage(templates *template.Template, page string, title string) func(http
 		}
 		w.Header().Set("content-type", "text/html; charset=utf-8")
 		templates.ExecuteTemplate(w, page, args)
+	}
+}
+
+func serveFile(fname string, contentType string) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		f, err := os.Open(fname)
+		if err != nil {
+			msg := "ERROR: unable to open file " + fname
+			log.Println(msg, err)
+		}
+		defer f.Close()
+		w.Header().Set("content-type", contentType)
+		_, err = io.Copy(w, f)
+		if err != nil {
+			msg := "ERROR: unable to copy file " + fname
+			log.Println(msg, err)
+		}
 	}
 }
 
